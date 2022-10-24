@@ -1,14 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import * as THREE from "three";
-import { Canvas, useFrame, ThreeElements } from "@react-three/fiber";
+import { Canvas, useFrame } from "@react-three/fiber";
 import { EffectComposer, SSAO } from "@react-three/postprocessing";
 import type { PlaneProps, Triplet } from "@react-three/cannon";
-
-import { Physics, useBox, usePlane, useSphere } from "@react-three/cannon";
-import niceColors from "nice-color-palettes";
-
-import { InstancedMesh, Mesh, Vector3 } from "three";
+import { Physics, useBox, usePlane } from "@react-three/cannon";
+import { InstancedMesh, Mesh } from "three";
 import { Color } from "three";
+
+const OFFSET = 0.2;
+let RADIUS = 0.0;
+const RADIAL_INCREASE = 0.015;
 
 function Rig({ v = new THREE.Vector3() }) {
   return useFrame((state) => {
@@ -44,13 +45,18 @@ const Boxes = ({ number, size }: InstancedGeometryProps) => {
     () => ({
       args,
       mass: 1,
-      position: [Math.random() - 0.5, Math.random() * 2, Math.random() - 0.5],
+      position: [0, 0, 0],
     }),
     useRef<InstancedMesh>(null)
   );
-  useFrame(() =>
-    at(Math.floor(Math.random() * number)).position.set(0, Math.random() * 2, 0)
-  );
+
+  useEffect(() => {
+    for (let i = 0; i < 200; i++) {
+      RADIUS += RADIAL_INCREASE;
+      at(i).position.set(Math.sin(i) * RADIUS, 0, Math.cos(i) * RADIUS);
+    }
+  }, []);
+
   return (
     <instancedMesh
       receiveShadow
