@@ -1,23 +1,21 @@
 import { FC, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
-import {
-  PlaneProps,
-  SphereProps,
-  Triplet,
-  WorkerApi,
-} from "@react-three/cannon";
-import { Physics, useBox, usePlane, useSphere } from "@react-three/cannon";
-import { InstancedMesh, Mesh, Vector2, Vector3 } from "three";
+import { PlaneProps, Triplet, WorkerApi } from "@react-three/cannon";
+import { Physics, useBox, usePlane, } from "@react-three/cannon";
+import { InstancedMesh, Mesh, Vector3 } from "three";
 import { Color } from "three";
-import { EffectComposer, DepthOfField } from "@react-three/postprocessing";
-import { Environment, Lightformer, OrbitControls } from "@react-three/drei";
-
+import {
+  EffectComposer,
+  DepthOfField,
+  Bloom,
+} from "@react-three/postprocessing";
+import { Environment } from "@react-three/drei";
 import getSpiralCoords from "./helpers/spiral.helper";
 
 const Hero: FC = () => {
-  const CAM_START: THREE.Vector3 = new Vector3(15, 12, 8);
-  const HOVER_CLASS = "hover-domino" 
+  const CAM_START: THREE.Vector3 = new Vector3(-8, 12, 15);
+  const HOVER_CLASS = "hover-domino";
 
   const Rig: FC = () => {
     const v = new THREE.Vector3();
@@ -48,8 +46,6 @@ const Hero: FC = () => {
   };
 
   const Dominos: FC = () => {
-    const [initialized, setInitialized] = useState(false);
-
     const args: Triplet = [0.1, 1, 0.5];
     const [ref, { at }] = useBox(
       () => ({
@@ -66,7 +62,6 @@ const Hero: FC = () => {
 
     useEffect(() => {
       firstDominoRef.current = at(dominoCountTotal - 1);
-
       for (let i = 0; i < dominoCountTotal; i++) {
         at(i).position.set(positions[i].x, 0.5, positions[i].y);
         if (i >= 1) {
@@ -74,33 +69,31 @@ const Hero: FC = () => {
             positions[i].x - positions[i - 1].x,
             positions[i].y - positions[i - 1].y
           );
-          at(i).rotation.set(0, angle + (90 * Math.PI) / 180, 0);
-        }
+          at(i).rotation.set(0, angle + (90 * Math.PI) / 180, 0);          
+        }        
       }
-
-      setInitialized(true);
     }, []);
 
     return (
       <instancedMesh
         receiveShadow
         castShadow
-        ref={ref}
+        ref={ref}        
         args={[undefined, undefined, dominoCountTotal]}
-        onPointerEnter={((e) => {
+        onPointerEnter={(e) => {
           if (e.instanceId === dominoCountTotal - 1) {
             if (!document.body.classList.contains(HOVER_CLASS)) {
-              document.body.classList.add(HOVER_CLASS)
+              document.body.classList.add(HOVER_CLASS);              
             }
           }
-        })}
-        onPointerLeave={((e) => {
+        }}
+        onPointerLeave={(e) => {
           if (e.instanceId === dominoCountTotal - 1) {
             if (document.body.classList.contains(HOVER_CLASS)) {
-              document.body.classList.remove(HOVER_CLASS)
+              document.body.classList.remove(HOVER_CLASS);
             }
           }
-        })}
+        }}
         onClick={(e) => {
           if (e.instanceId === dominoCountTotal - 1) {
             firstDominoRef.current?.applyLocalImpulse([1, 0, 0], [0, 0.5, 0]);
@@ -108,7 +101,7 @@ const Hero: FC = () => {
         }}
       >
         <boxGeometry args={args}></boxGeometry>
-        <meshStandardMaterial color="orange" />
+        <meshStandardMaterial roughness={0.1} color="blue" />
       </instancedMesh>
     );
   };
@@ -124,24 +117,21 @@ const Hero: FC = () => {
               fov: 35,
             }}
           >
-            <ambientLight intensity={1} />
+            <color attach="background" args={["#333"]} />
+            <ambientLight intensity={0.25} />
+            <spotLight position={[50, 50, -20]} angle={0.15} intensity={3} penumbra={1} castShadow/>
+            <pointLight position={[0, 100, -10]} intensity={2} />
 
-            {/* <Environment files='/adamsbridge.hdr' /> */}
-            {/* <EffectComposer>
+            <EffectComposer>
               <DepthOfField
-                target={[0, 0, 0]}
-                focalLength={0.01} // focal length
-                bokehScale={8}
+                target={[0, 0, 5]}
+                focalLength={0.005}
+                bokehScale={5}
               />
-            </EffectComposer> */}
-            {/* <OrbitControls
-              // autoRotate
-              autoRotateSpeed={0.1}
-              enablePan={false}
-              enableZoom={false}
-              minPolarAngle={Math.PI / 4}
-              maxPolarAngle={Math.PI / 4}
-            /> */}
+              <Bloom mipmapBlur luminanceThreshold={.5} radius={.25} />
+            </EffectComposer>
+            <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
+
             <Rig />
             <Physics
               allowSleep
@@ -154,6 +144,7 @@ const Hero: FC = () => {
               }}
             >
               <Dominos />
+
               <Plane rotation={[-Math.PI / 2, 0, 0]} />
             </Physics>
           </Canvas>
