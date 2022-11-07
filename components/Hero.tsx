@@ -1,17 +1,19 @@
-import { FC, useEffect, useRef, useState } from "react"
+import { FC, Suspense, useEffect, useRef, useState } from "react"
 import * as THREE from "three"
 import { Canvas, useFrame } from "@react-three/fiber"
 import type { PlaneProps, SphereProps, Triplet } from "@react-three/cannon"
 import { Physics, useBox, usePlane, useSphere } from "@react-three/cannon"
 import { InstancedMesh, Mesh, Vector2 } from "three"
 import { Color } from "three"
+import { EffectComposer, DepthOfField } from "@react-three/postprocessing"
+import { Environment, Lightformer, OrbitControls } from "@react-three/drei"
 
 // Camera movement
 const Rig: FC = () => {
 	const v = new THREE.Vector3()
 	return useFrame(state => {
 		state.camera.position.lerp(
-			v.set(state.mouse.x / 2, state.mouse.y / 2 + 8, 10),
+			v.set(10, state.mouse.y * 1.5 + 8, state.mouse.x * 1.5),
 			0.05
 		)
 		state.camera.lookAt(new THREE.Vector3(0, 0, 0))
@@ -23,26 +25,10 @@ const Plane: FC<PlaneProps> = props => {
 	const [ref] = usePlane(() => ({ ...props }), useRef<Mesh>(null))
 	return (
 		<mesh ref={ref} receiveShadow>
-			<planeGeometry args={[5, 5]} />
+			<planeGeometry args={[50, 50]} />
 			<shadowMaterial
-				color={new Color("#B1BD00").convertSRGBToLinear()}
+				color={new Color("#333").convertSRGBToLinear()}
 				opacity={0.125}
-			/>
-		</mesh>
-	)
-}
-
-// Ball
-const Ball: FC<SphereProps & { scale: number }> = ({ scale, ...props }) => {
-	const [ref] = useSphere(
-		() => ({ ...props, mass: 50, args: [scale] }),
-		useRef<Mesh>(null)
-	)
-	return (
-		<mesh ref={ref} receiveShadow>
-			<sphereGeometry args={[scale, 64, 64]} />
-			<meshLambertMaterial
-				color={new Color("#F6FD8C").convertSRGBToLinear()}
 			/>
 		</mesh>
 	)
@@ -50,7 +36,6 @@ const Ball: FC<SphereProps & { scale: number }> = ({ scale, ...props }) => {
 
 // Dominos
 const Dominos: FC = () => {
-	const [positions, setPositions] = useState<THREE.Vector2[] | undefined>()
 	const [dominoCountTotal, setDominoCountTotal] = useState<number>(0)
 
 	const COILS = 6
@@ -59,17 +44,21 @@ const Dominos: FC = () => {
 	const CENTER_X = 0
 	const CENTER_Y = 0
 
-	const args: Triplet = [0.175, 1, 0.5]
+	const baubleMaterial = new THREE.MeshLambertMaterial({
+		color: "#c0a0a0",
+		emissive: "red",
+	})
+
+	const args: Triplet = [0.1, 1, 0.5]
 	const [ref, { at }] = useBox(
 		() => ({
 			args,
-			mass: 0.0025,
-			position: [0, 0, 0],
+			mass: 1,
 		}),
 		useRef<InstancedMesh>(null)
 	)
 
-	const calculatePositions = () => {
+	const calculatePositions = (): Vector2[] => {
 		const thetaMax = COILS * 2 * Math.PI
 		const awayStep = RADIUS / thetaMax
 		const CHORD = 0.5
@@ -92,18 +81,13 @@ const Dominos: FC = () => {
 			i++
 		}
 		setDominoCountTotal(i)
-		setPositions(positions)
+		console.log(i)
+
+		return positions
 	}
 
 	useEffect(() => {
-		calculatePositions()
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [])
-
-	useEffect(() => {
-		if (!positions || !at) {
-			return
-		}
+		let positions = calculatePositions()
 
 		for (let i = 0; i < dominoCountTotal; i++) {
 			at(i).position.set(positions[i].x, 0.5, positions[i].y)
@@ -117,12 +101,9 @@ const Dominos: FC = () => {
 			}
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [positions])
+	})
 
 	// TODO: Defer loading untill number of dominos has been calculated by the algorithm
-	// if (!dominoCountTotal) {
-	// 	return <>Loading...</>
-	// }
 
 	return (
 		<instancedMesh
@@ -130,13 +111,11 @@ const Dominos: FC = () => {
 			castShadow
 			ref={ref}
 			args={[undefined, undefined, 299]}
+			material={baubleMaterial}
 			// TODO: See above
 			// args={[undefined, undefined, dominoCountTotal]}
 		>
 			<boxGeometry args={args}></boxGeometry>
-			<meshLambertMaterial
-				color={new Color("#F6FD8C").convertSRGBToLinear()}
-			/>
 		</instancedMesh>
 	)
 }
@@ -145,33 +124,72 @@ const Hero: FC = () => {
 	return (
 		<div className='h-screen w-full'>
 			<aside className='absolute w-full h-full'>
-				<Canvas
-					shadows
-					onCreated={({ scene }) => {
-						scene.background = new Color("#FDFFF5")
-					}}
-				>
-					<hemisphereLight intensity={0.65} />
-					<spotLight
-						position={[20, 50, 10]}
-						angle={0.3}
-						penumbra={1}
-						intensity={1}
-						castShadow
-						shadow-mapSize-width={256}
-						shadow-mapSize-height={256}
-					/>
-					<Rig />
-					<Physics gravity={[0, -50, 0]}>
-						<Ball
-							position={[-20, 1, 10]}
-							velocity={[20, 0, -10]}
-							scale={1}
+				<Suspense>
+					<Canvas
+						shadows
+						camera={{ position: [0, 10, 20], fov: 35 }}
+						onCreated={state =>
+							(state.gl.toneMappingExposure = 1.5)
+						}
+						flat
+						linear
+					>
+						<ambientLight intensity={1} />
+						<spotLight
+							position={[20, 20, 25]}
+							penumbra={1}
+							angle={0.2}
+							color='white'
+							castShadow
+							shadow-mapSize={[512, 512]}
 						/>
-						<Dominos />
-						<Plane rotation={[-Math.PI / 2, 0, 0]} />
-					</Physics>
-				</Canvas>
+						<directionalLight position={[0, 5, -4]} intensity={4} />
+						<directionalLight
+							position={[0, -15, -0]}
+							intensity={4}
+							color='red'
+						/>
+						{/* <Environment files='/adamsbridge.hdr' /> */}
+						{/* <EffectComposer>
+							<DepthOfField
+								target={[0, 0, 0]}
+								focalLength={0.02} // focal length
+								bokehScale={8}
+							/>
+						</EffectComposer> */}
+						<OrbitControls
+							autoRotate
+							autoRotateSpeed={0.1}
+							enablePan={false}
+							enableZoom={false}
+							minPolarAngle={Math.PI / 4}
+							maxPolarAngle={Math.PI / 4}
+						/>
+						{/* <Rig /> */}
+						<Physics
+							allowSleep
+							broadphase='Naive'
+							iterations={20}
+							tolerance={0.0001}
+							defaultContactMaterial={{
+								friction: 0.005,
+								restitution: 0.7,
+								contactEquationStiffness: 1e7,
+								contactEquationRelaxation: 1,
+								frictionEquationStiffness: 1e7,
+								frictionEquationRelaxation: 2,
+							}}
+						>
+							{/* <Ball
+							position={[8, 0.5, 2]}
+							scale={0.25}
+							velocity={[0, 0, -1]}
+						/> */}
+							<Dominos />
+							<Plane rotation={[-Math.PI / 2, 0, 0]} />
+						</Physics>
+					</Canvas>
+				</Suspense>
 			</aside>
 		</div>
 	)
