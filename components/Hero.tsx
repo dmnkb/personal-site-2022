@@ -39,7 +39,7 @@ const Hero: FC = () => {
         <planeGeometry args={[50, 50]} />
         <shadowMaterial
           color={new Color("#333").convertSRGBToLinear()}
-          opacity={0.125}
+          opacity={0.5}
         />
       </mesh>
     );
@@ -113,7 +113,7 @@ const Hero: FC = () => {
           <Canvas
             shadows
             camera={{
-              position: [CAM_START.x, CAM_START.y, CAM_START.z],
+              position: [CAM_START.x, CAM_START.y, CAM_START.z + 10],
               fov: 35,
             }}
           >
