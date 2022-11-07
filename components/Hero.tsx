@@ -8,7 +8,7 @@ import {
   WorkerApi,
 } from "@react-three/cannon";
 import { Physics, useBox, usePlane, useSphere } from "@react-three/cannon";
-import { InstancedMesh, Mesh, Vector2 } from "three";
+import { InstancedMesh, Mesh, Vector2, Vector3 } from "three";
 import { Color } from "three";
 import { EffectComposer, DepthOfField } from "@react-three/postprocessing";
 import { Environment, Lightformer, OrbitControls } from "@react-three/drei";
@@ -16,12 +16,18 @@ import { Environment, Lightformer, OrbitControls } from "@react-three/drei";
 import getSpiralCoords from "./helpers/spiral.helper";
 
 const Hero: FC = () => {
-  const [isHoveringFirstDomino, setIsHoveringFirstDomino] = useState(false);
+  const CAM_START: THREE.Vector3 = new Vector3(15, 12, 8);
+  const HOVER_CLASS = "hover-domino" 
+
   const Rig: FC = () => {
     const v = new THREE.Vector3();
     return useFrame((state) => {
       state.camera.position.lerp(
-        v.set(10, state.mouse.y * 1.5 + 8, state.mouse.x * 1.5),
+        v.set(
+          CAM_START.x,
+          CAM_START.y + state.mouse.y * 1.5,
+          CAM_START.z + state.mouse.x * 1.5
+        ),
         0.05
       );
       state.camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -42,8 +48,7 @@ const Hero: FC = () => {
   };
 
   const Dominos: FC = () => {
-
-    const [initialized, setInitialized] = useState(false)
+    const [initialized, setInitialized] = useState(false);
 
     const args: Triplet = [0.1, 1, 0.5];
     const [ref, { at }] = useBox(
@@ -57,11 +62,10 @@ const Hero: FC = () => {
     const dominoCountTotal = spiralData.totalCount;
     const positions = spiralData.coords;
 
-    const firstDominoRef = useRef<WorkerApi | undefined>()
+    const firstDominoRef = useRef<WorkerApi | undefined>();
 
     useEffect(() => {
-      
-      firstDominoRef.current = at(dominoCountTotal - 1)
+      firstDominoRef.current = at(dominoCountTotal - 1);
 
       for (let i = 0; i < dominoCountTotal; i++) {
         at(i).position.set(positions[i].x, 0.5, positions[i].y);
@@ -71,10 +75,10 @@ const Hero: FC = () => {
             positions[i].y - positions[i - 1].y
           );
           at(i).rotation.set(0, angle + (90 * Math.PI) / 180, 0);
-        }        
+        }
       }
 
-      setInitialized(true)
+      setInitialized(true);
     }, []);
 
     return (
@@ -83,12 +87,25 @@ const Hero: FC = () => {
         castShadow
         ref={ref}
         args={[undefined, undefined, dominoCountTotal]}
+        onPointerEnter={((e) => {
+          if (e.instanceId === dominoCountTotal - 1) {
+            if (!document.body.classList.contains(HOVER_CLASS)) {
+              document.body.classList.add(HOVER_CLASS)
+            }
+          }
+        })}
+        onPointerLeave={((e) => {
+          if (e.instanceId === dominoCountTotal - 1) {
+            if (document.body.classList.contains(HOVER_CLASS)) {
+              document.body.classList.remove(HOVER_CLASS)
+            }
+          }
+        })}
         onClick={(e) => {
-          if (e.instanceId === dominoCountTotal - 1) {            
-            firstDominoRef.current?.applyLocalImpulse([1,0,0], [0,.5,0])
+          if (e.instanceId === dominoCountTotal - 1) {
+            firstDominoRef.current?.applyLocalImpulse([1, 0, 0], [0, 0.5, 0]);
           }
         }}
-        
       >
         <boxGeometry args={args}></boxGeometry>
         <meshStandardMaterial color="orange" />
@@ -102,8 +119,10 @@ const Hero: FC = () => {
         <Suspense>
           <Canvas
             shadows
-            camera={{ position: [10, 10, 10], fov: 35 }}
-            
+            camera={{
+              position: [CAM_START.x, CAM_START.y, CAM_START.z],
+              fov: 35,
+            }}
           >
             <ambientLight intensity={1} />
 
@@ -115,15 +134,15 @@ const Hero: FC = () => {
                 bokehScale={8}
               />
             </EffectComposer> */}
-            <OrbitControls
-              autoRotate
+            {/* <OrbitControls
+              // autoRotate
               autoRotateSpeed={0.1}
               enablePan={false}
               enableZoom={false}
               minPolarAngle={Math.PI / 4}
               maxPolarAngle={Math.PI / 4}
-            />
-            {/* <Rig /> */}
+            /> */}
+            <Rig />
             <Physics
               allowSleep
               broadphase="Naive"
@@ -131,11 +150,7 @@ const Hero: FC = () => {
               tolerance={0.0001}
               defaultContactMaterial={{
                 friction: 0.005,
-                restitution: 0.7,
-                contactEquationStiffness: 1e7,
-                contactEquationRelaxation: 1,
-                frictionEquationStiffness: 1e7,
-                frictionEquationRelaxation: 2,
+                restitution: 0,
               }}
             >
               <Dominos />
