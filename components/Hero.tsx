@@ -2,7 +2,7 @@ import { FC, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { PlaneProps, Triplet, WorkerApi } from "@react-three/cannon";
-import { Physics, useBox, usePlane, } from "@react-three/cannon";
+import { Physics, useBox, usePlane } from "@react-three/cannon";
 import { InstancedMesh, Mesh, Vector3 } from "three";
 import { Color } from "three";
 import {
@@ -69,21 +69,22 @@ const Hero: FC = () => {
             positions[i].x - positions[i - 1].x,
             positions[i].y - positions[i - 1].y
           );
-          at(i).rotation.set(0, angle + (90 * Math.PI) / 180, 0);          
-        }        
+          at(i).rotation.set(0, angle + (90 * Math.PI) / 180, 0);
+        }
       }
+      // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
       <instancedMesh
         receiveShadow
         castShadow
-        ref={ref}        
+        ref={ref}
         args={[undefined, undefined, dominoCountTotal]}
         onPointerEnter={(e) => {
           if (e.instanceId === dominoCountTotal - 1) {
             if (!document.body.classList.contains(HOVER_CLASS)) {
-              document.body.classList.add(HOVER_CLASS);              
+              document.body.classList.add(HOVER_CLASS);
             }
           }
         }}
@@ -119,7 +120,13 @@ const Hero: FC = () => {
           >
             <color attach="background" args={["#333"]} />
             <ambientLight intensity={0.25} />
-            <spotLight position={[50, 50, -20]} angle={0.15} intensity={3} penumbra={1} castShadow/>
+            <spotLight
+              position={[50, 50, -20]}
+              angle={0.15}
+              intensity={3}
+              penumbra={1}
+              castShadow
+            />
             <pointLight position={[0, 100, -10]} intensity={2} />
 
             <EffectComposer>
@@ -128,7 +135,7 @@ const Hero: FC = () => {
                 focalLength={0.005}
                 bokehScale={5}
               />
-              <Bloom mipmapBlur luminanceThreshold={.5} radius={.25} />
+              <Bloom mipmapBlur luminanceThreshold={0.5} radius={0.25} />
             </EffectComposer>
             <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
 

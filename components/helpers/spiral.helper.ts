@@ -3,7 +3,7 @@ import { Vector2 } from "three";
 const getSpiralCoords = (
   coils = 6,
   radius = 8,
-  rotation = .5 * Math.PI,
+  rotation = 0.5 * Math.PI,
   centerX = 0,
   centerY = 0
 ): { coords: Vector2[]; totalCount: number } => {
@@ -32,4 +32,4 @@ const getSpiralCoords = (
   return { coords, totalCount };
 };
 
-export default getSpiralCoords
+export default getSpiralCoords;
