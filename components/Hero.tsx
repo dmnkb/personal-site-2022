@@ -64,10 +64,10 @@ const Hero: FC = () => {
       firstDominoRef.current = at(dominoCountTotal - 1);
       for (let i = 0; i < dominoCountTotal; i++) {
         at(i).position.set(positions[i].x, 0.5, positions[i].y);
-        if (i >= 1) {
+        if (i < dominoCountTotal - 1) {
           let angle = Math.atan2(
-            positions[i].x - positions[i - 1].x,
-            positions[i].y - positions[i - 1].y
+            positions[i + 1].x - positions[i].x,
+            positions[i + 1].y - positions[i].y
           );
           at(i).rotation.set(0, angle + (90 * Math.PI) / 180, 0);
         }
