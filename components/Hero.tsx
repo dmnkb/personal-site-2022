@@ -20,13 +20,16 @@ import {
 } from "@react-three/postprocessing";
 import useWebsiteState from "../state/store";
 import getSpiralCoords from "./helpers/spiral.helper";
+import mobileCheck from "./helpers/isMobile.helper";
 
 interface HeroProps {
   className?: string;
 }
 
 const Hero: FC<HeroProps> = ({ className }) => {
-  const CAM_START: THREE.Vector3 = new Vector3(-8, 12, 15);
+  const CAM_START: THREE.Vector3 = mobileCheck()
+    ? new Vector3(-8, 40, 20)
+    : new Vector3(-8, 12, 15);
 
   const Rig: FC = () => {
     const v = new THREE.Vector3();
