@@ -17,14 +17,22 @@
     "next": "12.3.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "three": "^0.145.0"
+    "react-spring": "^9.5.5",
+    "three": "^0.145.0",
+    "zustand": "^4.1.4",
+    "clsx": "^1.2.1"
   },
   "devDependencies": {
     "@types/node": "18.11.4",
     "@types/react": "18.0.22",
     "@types/react-dom": "18.0.7",
+    "@typescript-eslint/eslint-plugin": "^5.42.1",
+    "@typescript-eslint/parser": "^5.42.1",
     "autoprefixer": "^10.4.12",
     "eslint": "8.26.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-config-airbnb-typescript": "^17.0.0",
     "eslint-config-next": "12.3.1",
     "eslint-config-prettier": "^8.5.0",
     "postcss": "^8.4.18",

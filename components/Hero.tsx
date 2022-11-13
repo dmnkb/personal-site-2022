@@ -1,21 +1,32 @@
-import { FC, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { FC, Suspense, useRef } from "react";
+import { Environment, Sparkles } from "@react-three/drei";
+import clsx from "clsx";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { PlaneProps, Triplet, WorkerApi } from "@react-three/cannon";
-import { Physics, useBox, usePlane } from "@react-three/cannon";
-import { InstancedMesh, Mesh, Vector3 } from "three";
-import { Color } from "three";
+import {
+  PlaneProps,
+  Triplet,
+  WorkerApi,
+  Physics,
+  useBox,
+  usePlane,
+} from "@react-three/cannon";
+import { InstancedMesh, Mesh, Vector3, Color } from "three";
 import {
   EffectComposer,
-  DepthOfField,
   Bloom,
+  DepthOfField,
+  Noise,
 } from "@react-three/postprocessing";
-import { Environment } from "@react-three/drei";
+import useWebsiteState from "../state/store";
 import getSpiralCoords from "./helpers/spiral.helper";
 
-const Hero: FC = () => {
+interface HeroProps {
+  className?: string;
+}
+
+const Hero: FC<HeroProps> = ({ className }) => {
   const CAM_START: THREE.Vector3 = new Vector3(-8, 12, 15);
-  const HOVER_CLASS = "hover-domino";
 
   const Rig: FC = () => {
     const v = new THREE.Vector3();
@@ -45,70 +56,80 @@ const Hero: FC = () => {
     );
   };
 
-  const Dominos: FC = () => {
+  const Dominos = () => {
     const args: Triplet = [0.1, 1, 0.5];
+    const spiralData = getSpiralCoords();
+
+    const { setHovering } = useWebsiteState();
+
     const [ref, { at }] = useBox(
-      () => ({
+      (instanceNumber: number) => ({
         args,
         mass: 0.5,
+        position: [
+          spiralData.positions[instanceNumber].x,
+          0.5,
+          spiralData.positions[instanceNumber].y,
+        ],
+        rotation: [0, spiralData.rotations[instanceNumber], 0],
       }),
       useRef<InstancedMesh>(null)
     );
-    const spiralData = getSpiralCoords();
-    const dominoCountTotal = spiralData.totalCount;
-    const positions = spiralData.coords;
 
     const firstDominoRef = useRef<WorkerApi | undefined>();
+    firstDominoRef.current = at(spiralData.totalCount - 1);
 
-    useEffect(() => {
-      firstDominoRef.current = at(dominoCountTotal - 1);
-      for (let i = 0; i < dominoCountTotal; i++) {
-        at(i).position.set(positions[i].x, 0.5, positions[i].y);
-        if (i < dominoCountTotal - 1) {
-          let angle = Math.atan2(
-            positions[i + 1].x - positions[i].x,
-            positions[i + 1].y - positions[i].y
-          );
-          at(i).rotation.set(0, angle + (90 * Math.PI) / 180, 0);
-        }
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    // Draw all dominos in the same color except the first one
+    const dominoColorArray = new Float32Array(spiralData.totalCount * 3);
+    const allDominosColor = new Color("#F6B5C7").convertSRGBToLinear();
+    const allDominosColorRGB = [
+      allDominosColor.r,
+      allDominosColor.g,
+      allDominosColor.b,
+    ];
+    const firstDominoColor = new Color("#fff").convertSRGBToLinear();
+    const firstColorBuffer = new Float32Array(allDominosColorRGB);
+    dominoColorArray.set(firstColorBuffer, 0);
+    for (let i = 1; i < spiralData.totalCount - 1; i++) {
+      dominoColorArray.copyWithin(i * 3, (i - 1) * 3, i * 3);
+    }
+    firstDominoColor.toArray(dominoColorArray, spiralData.totalCount * 3 - 3);
 
     return (
       <instancedMesh
         receiveShadow
         castShadow
         ref={ref}
-        args={[undefined, undefined, dominoCountTotal]}
-        onPointerEnter={(e) => {
-          if (e.instanceId === dominoCountTotal - 1) {
-            if (!document.body.classList.contains(HOVER_CLASS)) {
-              document.body.classList.add(HOVER_CLASS);
-            }
+        args={[undefined, undefined, spiralData.totalCount]}
+        onPointerOver={(e) => {
+          if (e.instanceId === spiralData.totalCount - 1) {
+            setHovering(true);
           }
         }}
         onPointerLeave={(e) => {
-          if (e.instanceId === dominoCountTotal - 1) {
-            if (document.body.classList.contains(HOVER_CLASS)) {
-              document.body.classList.remove(HOVER_CLASS);
-            }
+          if (e.instanceId === spiralData.totalCount - 1) {
+            setHovering(false);
           }
         }}
         onClick={(e) => {
-          if (e.instanceId === dominoCountTotal - 1) {
+          if (e.instanceId === spiralData.totalCount - 1) {
             firstDominoRef.current?.applyLocalImpulse([1, 0, 0], [0, 0.5, 0]);
           }
         }}
       >
-        <boxGeometry args={args}></boxGeometry>
-        <meshStandardMaterial roughness={0.1} color="blue" />
+        <boxGeometry args={args}>
+          <instancedBufferAttribute
+            attach="attributes-color"
+            args={[dominoColorArray, 3]}
+          />
+        </boxGeometry>
+        <meshStandardMaterial roughness={0.1} vertexColors toneMapped={false} />
       </instancedMesh>
     );
   };
 
   return (
-    <div className="h-screen w-full">
+    <div className={clsx("h-screen w-full", className)}>
       <aside className="absolute w-full h-full">
         <Suspense>
           <Canvas
@@ -118,28 +139,24 @@ const Hero: FC = () => {
               fov: 35,
             }}
           >
-            <color attach="background" args={["#333"]} />
-            <ambientLight intensity={0.25} />
-            <spotLight
-              position={[50, 50, -20]}
-              angle={0.15}
-              intensity={3}
-              penumbra={1}
-              castShadow
-            />
-            <pointLight position={[0, 100, -10]} intensity={2} />
+            <color attach="background" args={["#202030"]} />
 
+            <ambientLight intensity={1} />
             <EffectComposer>
               <DepthOfField
                 target={[0, 0, 5]}
                 focalLength={0.005}
                 bokehScale={5}
               />
-              <Bloom mipmapBlur luminanceThreshold={0.5} radius={0.25} />
+              <Bloom />
+              <Noise opacity={0.025} />
             </EffectComposer>
             <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
 
+            <Sparkles count={200} scale={[20, 20, 10]} size={1.5} speed={2} />
+
             <Rig />
+
             <Physics
               allowSleep
               broadphase="Naive"
@@ -151,7 +168,6 @@ const Hero: FC = () => {
               }}
             >
               <Dominos />
-
               <Plane rotation={[-Math.PI / 2, 0, 0]} />
             </Physics>
           </Canvas>

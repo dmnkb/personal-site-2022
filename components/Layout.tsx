@@ -1,5 +1,5 @@
 import Meta from "./Meta";
-import Nav from "./Nav";
+import Cursor from "./cursor/Cursor";
 
 interface LayouInterface {
   children: React.ReactNode;
@@ -7,9 +7,9 @@ interface LayouInterface {
 }
 
 const Layout: React.FC<LayouInterface> = ({ children, pageTitle }) => (
-  <div className="bg-body">
+  <div className="overflow-hidden relative cursor-none">
     <Meta pageTitle={pageTitle} />
-    <Nav />
+    <Cursor />
     {children}
   </div>
 );
