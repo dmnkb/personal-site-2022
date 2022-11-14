@@ -1,3 +1,38 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "Inter";
+    src: url("../public/fonts/Inter-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Inter";
+    src: url("../public/fonts/Inter-SemiBold.ttf");
+    font-weight: bold;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Trap";
+    src: url("../public/fonts/Trap-Regular.ttf");
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "Trap";
+    src: url("../public/fonts/Trap-Bold.ttf");
+    font-weight: bold;
+    font-style: normal;
+  }
+
+  * {
+    text-rendering: geometricPrecision;
+  }
+
+  a {
+    cursor: none;
+  }
+}

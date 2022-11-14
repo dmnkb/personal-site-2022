@@ -1,6 +1,5 @@
-import { FC, Suspense, useRef } from "react";
+import { FC, memo, useRef } from "react";
 import { Environment, Sparkles } from "@react-three/drei";
-import clsx from "clsx";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
 import {
@@ -18,15 +17,11 @@ import {
   DepthOfField,
   Noise,
 } from "@react-three/postprocessing";
-import useWebsiteState from "../state/store";
-import getSpiralCoords from "./helpers/spiral.helper";
-import mobileCheck from "./helpers/isMobile.helper";
+import useWebsiteState from "../../state/store";
+import getSpiralCoords from "../../helpers/spiral.helper";
+import mobileCheck from "../../helpers/isMobile.helper";
 
-interface HeroProps {
-  className?: string;
-}
-
-const Hero: FC<HeroProps> = ({ className }) => {
+const DominoCanvas: FC = () => {
   const CAM_START: THREE.Vector3 = mobileCheck()
     ? new Vector3(-8, 40, 20)
     : new Vector3(-8, 12, 15);
@@ -60,10 +55,9 @@ const Hero: FC<HeroProps> = ({ className }) => {
   };
 
   const Dominos = () => {
+    const { setHovering } = useWebsiteState();
     const args: Triplet = [0.1, 1, 0.5];
     const spiralData = getSpiralCoords();
-
-    const { setHovering } = useWebsiteState();
 
     const [ref, { at }] = useBox(
       (instanceNumber: number) => ({
@@ -132,52 +126,42 @@ const Hero: FC<HeroProps> = ({ className }) => {
   };
 
   return (
-    <div className={clsx("h-screen w-full", className)}>
-      <aside className="absolute w-full h-full">
-        <Suspense>
-          <Canvas
-            shadows
-            camera={{
-              position: [CAM_START.x, CAM_START.y, CAM_START.z + 10],
-              fov: 35,
-            }}
-          >
-            <color attach="background" args={["#202030"]} />
+    <Canvas
+      shadows
+      camera={{
+        position: [CAM_START.x, CAM_START.y, CAM_START.z + 10],
+        fov: 35,
+      }}
+    >
+      <color attach="background" args={["#202030"]} />
 
-            <ambientLight intensity={1} />
-            <EffectComposer>
-              <DepthOfField
-                target={[0, 0, 5]}
-                focalLength={0.005}
-                bokehScale={5}
-              />
-              <Bloom />
-              <Noise opacity={0.025} />
-            </EffectComposer>
-            <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
+      <ambientLight intensity={1} />
+      <EffectComposer>
+        <DepthOfField target={[0, 0, 5]} focalLength={0.005} bokehScale={5} />
+        <Bloom />
+        <Noise opacity={0.025} />
+      </EffectComposer>
+      <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
 
-            <Sparkles count={200} scale={[20, 20, 10]} size={1.5} speed={2} />
+      <Sparkles count={200} scale={[20, 20, 10]} size={1.5} speed={2} />
 
-            <Rig />
+      <Rig />
 
-            <Physics
-              allowSleep
-              broadphase="Naive"
-              iterations={20}
-              tolerance={0.0001}
-              defaultContactMaterial={{
-                friction: 0.005,
-                restitution: 0,
-              }}
-            >
-              <Dominos />
-              <Plane rotation={[-Math.PI / 2, 0, 0]} />
-            </Physics>
-          </Canvas>
-        </Suspense>
-      </aside>
-    </div>
+      <Physics
+        allowSleep
+        broadphase="Naive"
+        iterations={20}
+        tolerance={0.0001}
+        defaultContactMaterial={{
+          friction: 0.005,
+          restitution: 0,
+        }}
+      >
+        <Dominos />
+        <Plane rotation={[-Math.PI / 2, 0, 0]} />
+      </Physics>
+    </Canvas>
   );
 };
 
-export default Hero;
+export default memo(DominoCanvas);

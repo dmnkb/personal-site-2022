@@ -2,8 +2,8 @@ import clsx from "clsx";
 import { useEffect, useState } from "react";
 import Meta from "./Meta";
 import Cursor from "./cursor/Cursor";
-import isMobile from "./helpers/isMobile.helper";
-import isSSR from "./helpers/isSSR.helper";
+import isMobile from "../helpers/isMobile.helper";
+import isSSR from "../helpers/isSSR.helper";
 
 interface LayouInterface {
   children: React.ReactNode;
