@@ -2,7 +2,7 @@ import clsx from "clsx";
 import React, { FC, PropsWithChildren } from "react";
 
 type HeadlineProps = PropsWithChildren & {
-  tag?: keyof JSX.IntrinsicElements;
+  tag?: React.ElementType;
   size?: "l" | "m" | "s";
   className?: string;
 };
