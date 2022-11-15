@@ -39,7 +39,9 @@ const Hero: FC = () => {
             r="50"
           />
         </svg>
-        <Headline className="text-center">Hi, I&apos;m Dominik, </Headline>
+        <Headline className="text-center" tag="h1">
+          Hi, I&apos;m Dominik,{" "}
+        </Headline>
         <Pragraph className="text-center mt-8 sm:max-w-[80%] md:max-w-[70%] lg:max-w-[600px]">
           I&apos;m a creative developer from Germany currently fighting the
           climat crisis at Lichtblick.
