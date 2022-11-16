@@ -3,7 +3,7 @@ import { FC, Suspense, useEffect, useState } from "react";
 import DominoCanvas from "./DominoCanvas";
 import useWebsiteState from "../../state/store";
 import Headline from "../Headline";
-import Pragraph from "../Paragraph";
+import Paragraph from "../Paragraph";
 import Button from "../Button";
 
 const Hero: FC = () => {
@@ -60,7 +60,7 @@ const Hero: FC = () => {
         <Headline className="text-center" tag="h1">
           Hi, I&apos;m Dominik,{" "}
         </Headline>
-        <Pragraph className="text-center mt-8 sm:max-w-[80%] md:max-w-[70%] lg:max-w-[600px]">
+        <Paragraph className="text-center mt-8 sm:max-w-[80%] md:max-w-[70%] lg:max-w-[600px]">
           I&apos;m a Germany-located creative developer currently fighting the
           climate crisis at{" "}
           <a
@@ -78,8 +78,8 @@ const Hero: FC = () => {
             Lichtblick
           </a>
           .
-        </Pragraph>
-        <Pragraph className="text-center mt-8">
+        </Paragraph>
+        <Paragraph className="text-center mt-8">
           <a
             className="underline"
             href="mailto:inquiry@borchert.me"
@@ -92,7 +92,7 @@ const Hero: FC = () => {
           >
             inquiry@borchert.me
           </a>
-        </Pragraph>
+        </Paragraph>
       </main>
       <aside className="absolute w-full h-full">
         <Suspense>
@@ -100,7 +100,7 @@ const Hero: FC = () => {
         </Suspense>
       </aside>
       <div className="absolute z-50 bottom-10 right-10 transition-all duration-1000">
-        <Pragraph className="text-white flex gap-6 text-lg">
+        <Paragraph className="text-white flex gap-6 text-lg">
           <a
             href="imprint"
             onMouseEnter={() => {
@@ -123,7 +123,7 @@ const Hero: FC = () => {
           >
             Data Policy
           </a>
-        </Pragraph>
+        </Paragraph>
       </div>
     </header>
   );
