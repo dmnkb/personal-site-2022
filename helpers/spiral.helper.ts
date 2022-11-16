@@ -1,4 +1,5 @@
 import { Vector2 } from "three";
+import { getRandomNumber } from "./getRandomNumbers.helper.";
 
 const getSpiralCoords = (
   coils = 6,
@@ -24,7 +25,12 @@ const getSpiralCoords = (
       centerX + Math.cos(around) * away,
       centerY + Math.sin(around) * away
     );
-    positions.push(new Vector2(pos.x, pos.y));
+    positions.push(
+      new Vector2(
+        pos.x + getRandomNumber(iterations, true) / 10,
+        pos.y + getRandomNumber(iterations, true) / 10
+      )
+    );
 
     if (iterations > 0) {
       const angle = Math.atan2(
