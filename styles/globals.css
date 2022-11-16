@@ -32,7 +32,8 @@
     text-rendering: geometricPrecision;
   }
 
-  a {
+  a,
+  button {
     cursor: none;
   }
 }
