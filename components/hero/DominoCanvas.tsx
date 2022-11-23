@@ -1,7 +1,7 @@
-import { FC, memo, useRef } from "react";
+import React, { FC, memo, useRef } from "react";
 import { Environment, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
-import { Canvas, useFrame } from "@react-three/fiber";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
   PlaneProps,
   Triplet,
@@ -20,8 +20,13 @@ import {
 import useWebsiteState from "../../state/store";
 import getSpiralCoords from "../../helpers/spiral.helper";
 import mobileCheck from "../../helpers/isMobile.helper";
+import CTA from "./CTA";
 
 const DominoCanvas: FC = () => {
+  const ctaRef = useRef<HTMLElement>();
+  const cameraRef = useRef<THREE.Camera>();
+  const firstDominoRef = useRef<WorkerApi | undefined>();
+
   const CAM_START: THREE.Vector3 = mobileCheck()
     ? new Vector3(-8, 40, 20)
     : new Vector3(-8, 12, 15);
@@ -73,7 +78,6 @@ const DominoCanvas: FC = () => {
       useRef<InstancedMesh>(null)
     );
 
-    const firstDominoRef = useRef<WorkerApi | undefined>();
     firstDominoRef.current = at(spiralData.totalCount - 1);
 
     // Draw all dominos in the same color except the first one
@@ -92,6 +96,19 @@ const DominoCanvas: FC = () => {
     }
     firstDominoColor.toArray(dominoColorArray, spiralData.totalCount * 3 - 3);
 
+    const { size } = useThree();
+
+    firstDominoRef.current.position.subscribe((pos: Triplet) => {
+      if (!ctaRef.current || !cameraRef.current) {
+        return;
+      }
+      const coords = new Vector3(pos[0], pos[1], pos[2]);
+      cameraRef.current.updateMatrixWorld();
+      const localCoords = coords.project(cameraRef.current);
+      ctaRef.current.style.left = `${(localCoords.x + 1) * (size.width / 2)}px`;
+      ctaRef.current.style.top = `${(1 - localCoords.y) * (size.height / 2)}px`;
+    });
+
     return (
       <instancedMesh
         receiveShadow
@@ -108,11 +125,6 @@ const DominoCanvas: FC = () => {
             setHovering(false);
           }
         }}
-        onClick={(e) => {
-          if (e.instanceId === spiralData.totalCount - 1) {
-            firstDominoRef.current?.applyLocalImpulse([1, 0, 0], [0, 0.5, 0]);
-          }
-        }}
       >
         <boxGeometry args={args}>
           <instancedBufferAttribute
@@ -126,41 +138,52 @@ const DominoCanvas: FC = () => {
   };
 
   return (
-    <Canvas
-      shadows
-      camera={{
-        position: [CAM_START.x, CAM_START.y, CAM_START.z + 10],
-        fov: 35,
-      }}
-    >
-      <color attach="background" args={["#202030"]} />
-
-      <ambientLight intensity={1} />
-      <EffectComposer>
-        <DepthOfField target={[0, 0, 5]} focalLength={0.005} bokehScale={5} />
-        <Bloom />
-        <Noise opacity={0.025} />
-      </EffectComposer>
-      <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
-
-      <Sparkles count={200} scale={[20, 20, 10]} size={1.5} speed={2} />
-
-      <Rig />
-
-      <Physics
-        allowSleep
-        broadphase="Naive"
-        iterations={20}
-        tolerance={0.0001}
-        defaultContactMaterial={{
-          friction: 0.005,
-          restitution: 0,
+    <>
+      <CTA
+        innerRef={ctaRef}
+        onClick={() => {
+          firstDominoRef.current?.applyLocalImpulse([1, 0, 0], [0, 0.5, 0]);
+        }}
+      />
+      <Canvas
+        shadows
+        camera={{
+          position: [CAM_START.x, CAM_START.y, CAM_START.z + 10],
+          fov: 35,
+        }}
+        onCreated={(state) => {
+          cameraRef.current = state.camera;
         }}
       >
-        <Dominos />
-        <Plane rotation={[-Math.PI / 2, 0, 0]} />
-      </Physics>
-    </Canvas>
+        <color attach="background" args={["#202030"]} />
+
+        <ambientLight intensity={1} />
+        <EffectComposer>
+          <DepthOfField target={[0, 0, 5]} focalLength={0.005} bokehScale={5} />
+          <Bloom />
+          <Noise opacity={0.025} />
+        </EffectComposer>
+        <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
+
+        <Sparkles count={200} scale={[20, 20, 10]} size={1.5} speed={2} />
+
+        <Rig />
+
+        <Physics
+          allowSleep
+          broadphase="Naive"
+          iterations={20}
+          tolerance={0.0001}
+          defaultContactMaterial={{
+            friction: 0.005,
+            restitution: 0,
+          }}
+        >
+          <Dominos />
+          <Plane rotation={[-Math.PI / 2, 0, 0]} />
+        </Physics>
+      </Canvas>
+    </>
   );
 };
 
