@@ -5,7 +5,7 @@ const Footer = () => (
   <div className="absolute z-50 bottom-10 right-10">
     <Paragraph className="text-white flex gap-6 text-lg">
       <Link href="imprint" text="Imprint"></Link>
-      <Link href="data-policy" text="Data Policy"></Link>
+      <Link href="privacy-policy" text="Privacy Policy"></Link>
     </Paragraph>
   </div>
 );
