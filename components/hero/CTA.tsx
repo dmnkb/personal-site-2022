@@ -28,7 +28,12 @@ const CTA: FC<CTAProps> = ({ innerRef, onClick, ...props }) => {
       }}
       {...props}
     >
-      <div className="absolute w-[80px] h-[80px] rounded-full bg-white animate-ping delay-1000"></div>
+      <div
+        className="absolute w-[80px] h-[80px] rounded-full animate-ping border-white border-2"
+        style={{
+          animationDuration: "2s",
+        }} /* override tailwind's default animation speed without extra config */
+      ></div>
     </div>
   );
 };
