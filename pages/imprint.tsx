@@ -30,7 +30,7 @@ const Imprint: NextPage = () => (
         Kontakt
       </Headline>
       <Paragraph size="small" className="my-5">
-        E-Mail: <a href="mailto:mail@pbg.wtf">mail@pbg.wtf</a>
+        E-Mail: <a href="mailto:inquiry@borchert.me">inquiry@borchert.me</a>
       </Paragraph>
       <Headline tag="h3" className="mt-10">
         Redaktionell verantwortlich

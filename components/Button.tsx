@@ -25,7 +25,8 @@ const Button: FC<ButtonProps> = ({
 
   const stylesClasses: Partial<Record<StyleStates, string>> = {
     default:
-      "px-6 py-3 text-xl flex items-center bg-white text-background transition-all rounded-full tracking-tight",
+      "px-6 py-3 text-xl flex items-center bg-white text-background transition-all rounded-full tracking-tight border-2 border-white",
+    hover: "hover:bg-background  hover:text-white",
   };
 
   const arrows: Partial<Record<ArrowDirection, JSX.Element>> = {

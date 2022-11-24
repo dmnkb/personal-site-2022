@@ -144,6 +144,7 @@ const DominoCanvas: FC = () => {
           cameraRef.current = state.camera;
         }}
       >
+        {/* FIXME: Use theme */}
         <color attach="background" args={["#202030"]} />
 
         <ambientLight intensity={1} />

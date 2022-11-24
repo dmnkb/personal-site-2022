@@ -13,8 +13,10 @@ const Hero: FC = () => {
 
   const styleClassesMain = {
     base: clsx(
-      "absolute z-10 w-full h-full flex flex-col items-center justify-center p-3",
-      "text-white transition-all duration-1000 bg-black bg-opacity-50 backdrop-blur-md"
+      "absolute z-10 inset-0",
+      "flex flex-col items-center justify-center",
+      "p-3 text-white transition-all duration-1000",
+      "bg-black bg-opacity-50 backdrop-blur-lg"
     ),
     state: clsx(visible ? "opacity-100" : "opacity-0 pointer-events-none"),
   };
