@@ -26,8 +26,7 @@ const Cursor: FC = () => {
     "w-[20px] h-[20px] bg-white rounded-full absolute block -translate-x-1/2 -translate-y-1/2 z-[99999] transition-all";
 
   const variants = {
-    hovering:
-      "w-[200px] h-[200px] bg-[#fff] bg-opacity-20 backdrop-blur-md border-2",
+    hovering: "w-[100px] h-[100px] bg-[rgba(0,0,0,0)] border-2 border-white",
   };
 
   return (

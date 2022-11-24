@@ -1,4 +1,5 @@
-import { FC, MutableRefObject } from "react";
+import clsx from "clsx";
+import { FC, MutableRefObject, useState } from "react";
 import useWebsiteState from "../../state/store";
 
 interface CTAProps {
@@ -7,18 +8,27 @@ interface CTAProps {
 }
 
 const CTA: FC<CTAProps> = ({ innerRef, onClick, ...props }) => {
+  const [visible, setVisible] = useState(true);
   const { setHovering } = useWebsiteState();
 
   return (
     <div
       ref={innerRef}
-      className="w-[50px] h-[50px] rounded-full bg-white absolute -translate-x-1/2 -translate-y-full flex items-center justify-center z-[999]"
+      className={clsx(
+        "w-[80px] h-[80px] absolute -translate-x-1/2 -translate-y-1/2 flex items-center justify-center z-[8]",
+        visible ? null : "hidden"
+      )}
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}
-      onClick={onClick}
+      onClick={() => {
+        if (onClick !== undefined) {
+          onClick();
+        }
+        setVisible(false);
+      }}
       {...props}
     >
-      <div className="absolute w-[50px] h-[50px] rounded-full bg-white animate-ping delay-1000"></div>
+      <div className="absolute w-[80px] h-[80px] rounded-full bg-white animate-ping delay-1000"></div>
     </div>
   );
 };

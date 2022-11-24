@@ -145,6 +145,7 @@ const DominoCanvas: FC = () => {
           firstDominoRef.current?.applyLocalImpulse([1, 0, 0], [0, 0.5, 0]);
         }}
       />
+
       <Canvas
         shadows
         camera={{
