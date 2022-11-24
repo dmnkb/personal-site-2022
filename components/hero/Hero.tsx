@@ -1,16 +1,15 @@
 import clsx from "clsx";
 import { FC, Suspense, useEffect, useState } from "react";
 import DominoCanvas from "./DominoCanvas";
-import useWebsiteState from "../../state/store";
 import Headline from "../Headline";
 import Paragraph from "../Paragraph";
 import Button from "../Button";
+import Link from "../Link";
 
 const Hero: FC = () => {
   const DURATION = 10000;
   const [visible, setVisible] = useState(true);
   const [wasClosed, setWasClosed] = useState(false);
-  const { setHovering } = useWebsiteState();
 
   const styleClassesMain = {
     base: clsx(
@@ -63,35 +62,19 @@ const Hero: FC = () => {
         <Paragraph className="text-center mt-8 sm:max-w-[80%] md:max-w-[70%] lg:max-w-[600px]">
           I&apos;m a Germany-located creative developer currently fighting the
           climate crisis at{" "}
-          <a
-            className="underline"
+          <Link
             href="https://www.lichtblick.de/"
+            text="Lichtblick"
             target="_blank"
             rel="noreferrer"
-            onMouseEnter={() => {
-              setHovering(true);
-            }}
-            onMouseLeave={() => {
-              setHovering(false);
-            }}
-          >
-            Lichtblick
-          </a>
+          ></Link>
           .
         </Paragraph>
         <Paragraph className="text-center mt-8">
-          <a
-            className="underline"
+          <Link
             href="mailto:inquiry@borchert.me"
-            onMouseEnter={() => {
-              setHovering(true);
-            }}
-            onMouseLeave={() => {
-              setHovering(false);
-            }}
-          >
-            inquiry@borchert.me
-          </a>
+            text="inquiry@borchert.me"
+          ></Link>
         </Paragraph>
       </main>
       <aside className="absolute w-full h-full">
@@ -99,32 +82,6 @@ const Hero: FC = () => {
           <DominoCanvas />
         </Suspense>
       </aside>
-      <div className="absolute z-50 bottom-10 right-10 transition-all duration-1000">
-        <Paragraph className="text-white flex gap-6 text-lg">
-          <a
-            href="imprint"
-            onMouseEnter={() => {
-              setHovering(true);
-            }}
-            onMouseLeave={() => {
-              setHovering(false);
-            }}
-          >
-            Imprint
-          </a>
-          <a
-            href="data-policy"
-            onMouseEnter={() => {
-              setHovering(true);
-            }}
-            onMouseLeave={() => {
-              setHovering(false);
-            }}
-          >
-            Data Policy
-          </a>
-        </Paragraph>
-      </div>
     </header>
   );
 };

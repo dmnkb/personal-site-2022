@@ -6,6 +6,15 @@ module.exports = {
   ],
   theme: {
     extend: {
+      container: {
+        center: true,
+        padding: "2em",
+        screens: {
+          sm: "100%",
+          md: "100%",
+          lg: "800px",
+        },
+      },
       fontFamily: {
         paragraph: [
           "Inter",
