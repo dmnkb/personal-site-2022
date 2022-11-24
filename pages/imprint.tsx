@@ -6,7 +6,7 @@ import Layout from "../components/Layout";
 import Paragraph from "../components/Paragraph";
 
 const Imprint: NextPage = () => (
-  <Layout pageTitle="Startseite" className="bg-background">
+  <Layout pageTitle="Imprint" className="bg-background">
     <ContentWrapper className="text-white">
       <Link
         href="/"

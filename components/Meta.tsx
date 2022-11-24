@@ -11,19 +11,19 @@ const Meta: FC<MetaProps> = ({ pageTitle }) => {
   return (
     <Head>
       {/* prettier-ignore */}
-      <link rel="apple-touch-icon" sizes="180x180" href="assets/favicon/apple-touch-icon.png" />
+      <link rel="apple-touch-icon" sizes="180x180" href="favicon/apple-touch-icon.png" />
       {/* prettier-ignore */}
-      <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon/favicon-32x32.png" />
+      <link rel="icon" type="image/png" sizes="32x32" href="favicon/favicon-32x32.png" />
       {/* prettier-ignore */}
-      <link rel="icon" type="image/png" sizes="16x16" href="assets/favicon/favicon-16x16.png" />
+      <link rel="icon" type="image/png" sizes="16x16" href="favicon/favicon-16x16.png" />
       {/* prettier-ignore */}
-      <link rel="manifest" href="assets/favicon/site.webmanifest" />
+      <link rel="manifest" href="favicon/site.webmanifest" />
       {/* prettier-ignore */}
-      <link rel="mask-icon" href="assets/favicon/safari-pinned-tab.svg" color="#7b61ff" />
+      <link rel="mask-icon" href="favicon/safari-pinned-tab.svg" color="#7b61ff" />
       {/* prettier-ignore */}
       <meta name="msapplication-TileColor" content="#ffffff" />
       {/* prettier-ignore */}
-      <meta name="theme-color" content="#7B61FF" />
+      <meta name="theme-color" content="#F6B5C7" />
       <title>{`${BASE_TITLE} | ${pageTitle}`}</title>
       <meta name="description" content="" />
     </Head>
