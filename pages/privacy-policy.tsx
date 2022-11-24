@@ -6,7 +6,7 @@ import Layout from "../components/Layout";
 import Paragraph from "../components/Paragraph";
 
 const PrivacyPolicy: NextPage = () => (
-  <Layout pageTitle="Privacy Police" className="bg-background">
+  <Layout pageTitle="Privacy Policy" className="bg-background">
     <ContentWrapper className="text-white">
       <Link
         href="/"
@@ -379,14 +379,16 @@ const PrivacyPolicy: NextPage = () => (
         übermittelt. Dies sind:
       </Paragraph>
       <Paragraph size="small" className="my-5">
-        <ul>
-          <li>Browsertyp und Browserversion</li>
-          <li>verwendetes Betriebssystem</li>
-          <li>Referrer URL</li>
-          <li>Hostname des zugreifenden Rechners</li>
-          <li>Uhrzeit der Serveranfrage</li>
-          <li>IP-Adresse</li>
-        </ul>
+        • Browsertyp und Browserversion
+        <br />
+        • verwendetes Betriebssystem
+        <br />
+        • Referrer URL
+        <br />
+        • Hostname des zugreifenden Rechners
+        <br />
+        • Uhrzeit der Serveranfrage
+        <br />• IP-Adresse
       </Paragraph>
       <Paragraph size="small" className="my-5">
         Eine Zusammenführung dieser Daten mit anderen Datenquellen wird nicht

@@ -25,7 +25,12 @@ const Meta: FC<MetaProps> = ({ pageTitle }) => {
       {/* prettier-ignore */}
       <meta name="theme-color" content="#F6B5C7" />
       <title>{`${BASE_TITLE} | ${pageTitle}`}</title>
-      <meta name="description" content="" />
+      <meta
+        name="description"
+        content="Hi, I'm Dominik. I'm a Germany-located creative developer currently fighting the
+          climate crisis at Lichtblick."
+      />
+      <link rel="canonical" href="https://www.borchert.me" />
     </Head>
   );
 };

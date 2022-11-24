@@ -7,7 +7,7 @@ interface ContentWrapperProps {
 }
 
 const ContentWrapper: FC<ContentWrapperProps> = ({ className, children }) => (
-  <div className={clsx("container py-12 md:py-24 lg:py-36", className)}>
+  <div className={clsx("container py-12 mb-8 md:py-24 lg:py-36", className)}>
     {children}
   </div>
 );
