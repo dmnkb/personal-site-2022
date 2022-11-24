@@ -1,6 +1,7 @@
 import clsx from "clsx";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import { motion } from "framer-motion";
 import Meta from "./Meta";
 import Cursor from "./cursor/Cursor";
 import isMobile from "../helpers/isMobile.helper";
@@ -38,7 +39,7 @@ const Layout: React.FC<LayouInterface> = ({
   }, []);
 
   return (
-    <div
+    <main
       className={clsx(
         "overflow-hidden relative min-h-screen",
         renderCursor && useCustomCursor ? "cursor-none" : null,
@@ -46,10 +47,25 @@ const Layout: React.FC<LayouInterface> = ({
       )}
     >
       <Meta pageTitle={pageTitle} />
-      {renderCursor && useCustomCursor ? <Cursor /> : null}
-      {children}
-      <Footer />
-    </div>
+      <motion.div
+        initial="hidden" // Set the initial state to variants.hidden
+        animate="enter" // Animated state to variants.enter
+        exit="exit" // Exit state (used later) to variants.exit
+        transition={{
+          type: "spring",
+          duration: 2,
+        }} // Set the transition to linear
+        variants={{
+          hidden: { opacity: 0 },
+          enter: { opacity: 1 },
+          exit: { opacity: 0 },
+        }}
+      >
+        {renderCursor && useCustomCursor ? <Cursor /> : null}
+        {children}
+        <Footer />
+      </motion.div>
+    </main>
   );
 };
 

@@ -32,6 +32,11 @@
     text-rendering: geometricPrecision;
   }
 
+  html,
+  body {
+    @apply bg-background;
+  }
+
   .cursor-none * {
     cursor: none !important;
   }
