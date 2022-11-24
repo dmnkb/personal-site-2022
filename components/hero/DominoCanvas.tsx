@@ -17,7 +17,6 @@ import {
   DepthOfField,
   Noise,
 } from "@react-three/postprocessing";
-import useWebsiteState from "../../state/store";
 import getSpiralCoords from "../../helpers/spiral.helper";
 import mobileCheck from "../../helpers/isMobile.helper";
 import CTA from "./CTA";
@@ -60,7 +59,6 @@ const DominoCanvas: FC = () => {
   };
 
   const Dominos = () => {
-    const { setHovering } = useWebsiteState();
     const args: Triplet = [0.1, 1, 0.5];
     const spiralData = getSpiralCoords();
 
@@ -115,16 +113,6 @@ const DominoCanvas: FC = () => {
         castShadow
         ref={ref}
         args={[undefined, undefined, spiralData.totalCount]}
-        onPointerOver={(e) => {
-          if (e.instanceId === spiralData.totalCount - 1) {
-            setHovering(true);
-          }
-        }}
-        onPointerLeave={(e) => {
-          if (e.instanceId === spiralData.totalCount - 1) {
-            setHovering(false);
-          }
-        }}
       >
         <boxGeometry args={args}>
           <instancedBufferAttribute
