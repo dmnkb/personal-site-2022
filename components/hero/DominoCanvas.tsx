@@ -1,5 +1,5 @@
 import React, { FC, memo, useRef } from "react";
-import { Environment, Sparkles } from "@react-three/drei";
+import { Environment } from "@react-three/drei";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import {
@@ -11,12 +11,7 @@ import {
   usePlane,
 } from "@react-three/cannon";
 import { InstancedMesh, Mesh, Vector3, Color } from "three";
-import {
-  EffectComposer,
-  Bloom,
-  DepthOfField,
-  Noise,
-} from "@react-three/postprocessing";
+
 import getSpiralCoords from "../../helpers/spiral.helper";
 import mobileCheck from "../../helpers/isMobile.helper";
 import CTA from "./CTA";
@@ -148,14 +143,7 @@ const DominoCanvas: FC = () => {
         <color attach="background" args={["#202030"]} />
 
         <ambientLight intensity={1} />
-        <EffectComposer>
-          <DepthOfField target={[0, 0, 5]} focalLength={0.005} bokehScale={5} />
-          <Bloom />
-          <Noise opacity={0.025} />
-        </EffectComposer>
         <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
-
-        <Sparkles count={200} scale={[20, 20, 10]} size={1.5} speed={2} />
 
         <Rig />
 
