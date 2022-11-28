@@ -139,9 +139,6 @@ const DominoCanvas: FC = () => {
           cameraRef.current = state.camera;
         }}
       >
-        {/* FIXME: Use theme */}
-        <color attach="background" args={["#202030"]} />
-
         <ambientLight intensity={1} />
         <Environment files="https://dl.polyhaven.org/file/ph-assets/HDRIs/hdr/1k/aerodynamics_workshop_1k.hdr" />
 
