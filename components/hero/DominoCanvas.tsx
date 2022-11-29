@@ -14,7 +14,6 @@ import { InstancedMesh, Mesh, Vector3, Color } from "three";
 
 import getSpiralCoords from "../../helpers/spiral.helper";
 import mobileCheck from "../../helpers/isMobile.helper";
-import CTA from "./CTA";
 
 const DominoCanvas: FC = () => {
   const ctaRef = useRef<HTMLElement>();
@@ -122,13 +121,6 @@ const DominoCanvas: FC = () => {
 
   return (
     <>
-      <CTA
-        innerRef={ctaRef}
-        onClick={() => {
-          firstDominoRef.current?.applyLocalImpulse([1, 0, 0], [0, 0.5, 0]);
-        }}
-      />
-
       <Canvas
         shadows
         camera={{
