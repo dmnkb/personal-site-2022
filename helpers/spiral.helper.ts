@@ -1,5 +1,5 @@
 import { Vector2 } from "three";
-import { getRandomNumber } from "./getRandomNumbers.helper.";
+import { getRandomNumber } from "./getRandomNumbers.helper";
 
 const getSpiralCoords = (
   coils = 6,
