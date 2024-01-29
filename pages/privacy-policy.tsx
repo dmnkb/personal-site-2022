@@ -181,9 +181,8 @@ const PrivacyPolicy: NextPage = () => (
         <br />
         25421 Pinneberg
       </Paragraph>
-      <Paragraph size="small" className="my-5">
-        {/* TODO: obfuscate */}
-        E-Mail: inquiry@borchert.me
+      <Paragraph size="small" className="my-5">        
+        E-Mail: inquiry[at]borchert.me
       </Paragraph>
       <Paragraph size="small" className="my-5">
         Verantwortliche Stelle ist die natürliche oder juristische Person, die

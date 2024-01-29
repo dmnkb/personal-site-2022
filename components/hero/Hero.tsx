@@ -74,8 +74,8 @@ const Hero: FC = () => {
         </Paragraph>
         <Paragraph className="text-center mt-8">
           <Link
-            href="mailto:inquiry@borchert.me"
-            text="inquiry@borchert.me"
+            href="#"
+            text="inquiry[at]borchert.me"
           ></Link>
         </Paragraph>
       </main>
